@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "273735131022",
+    "project_id": "blindhelper-66dd6",
+    "storage_bucket": "blindhelper-66dd6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273735131022:android:29e39a3d8d67157a27cedf",
+        "android_client_info": {
+          "package_name": "com.example.blindhelper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "273735131022-me46hvgvduo3ealr2to4sr4crn01m8vc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhxvZQkN92Y1s-AAuUlJbScdjhnghA9n4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273735131022-me46hvgvduo3ealr2to4sr4crn01m8vc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
