@@ -6,11 +6,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
+import com.example.blindhelper.data.User
 import com.example.blindhelper.databinding.ActivityMain2Binding
+import com.example.blindhelper.viewmodel.UserViewModel
 import com.kakao.sdk.user.UserApiClient
 
 class MainActivity2 : AppCompatActivity() {
     lateinit var binding: ActivityMain2Binding
+    val model : UserViewModel by viewModels() //viewmodel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +33,8 @@ class MainActivity2 : AppCompatActivity() {
                         "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
                         "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
                 binding.txtEmail.text = user.kakaoAccount?.email
+
+                model.setUser(User(user.kakaoAccount?.profile?.nickname!!, user.kakaoAccount?.email!!, user.id.toString()!!))
             }
         }
 

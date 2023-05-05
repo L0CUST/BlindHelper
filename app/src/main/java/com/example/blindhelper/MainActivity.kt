@@ -6,6 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.example.blindhelper.data.Reward
+import com.example.blindhelper.data.User
 import com.example.blindhelper.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -48,10 +52,12 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this,"자동 로그인 성공", Toast.LENGTH_SHORT).show()
             }
         }
+        binding.bottom.setupWithNavController(binding.container.getFragment<NavHostFragment>().navController)
 
-        binding.btnKakaologin.setOnClickListener {
-            kakaoLogin()
-        }
+
+//        binding.btnKakaologin.setOnClickListener {
+//            kakaoLogin()
+//        }
     }
 
     private fun kakaoLogin() {

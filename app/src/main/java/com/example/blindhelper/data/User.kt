@@ -1,4 +1,4 @@
-package com.example.blindhelper
+package com.example.blindhelper.data
 
 data class User (
     var name: String,
