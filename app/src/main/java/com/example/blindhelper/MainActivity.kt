@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.blindhelper.data.Reward
 import com.example.blindhelper.data.User
 import com.example.blindhelper.databinding.ActivityMainBinding
+import com.example.blindhelper.viewmodel.ObstacleViewModel
+import com.example.blindhelper.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -26,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var mAuth: FirebaseAuth
     lateinit var mDbRef: DatabaseReference
+    private val userModel : UserViewModel by viewModels()
+    private val obstacleModel : ObstacleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,17 +52,31 @@ class MainActivity : AppCompatActivity() {
                     ContentValues.TAG, "토큰 정보 보기 성공" +
                         "\n회원번호: ${tokenInfo.id}" +
                         "\n만료시간: ${tokenInfo.expiresIn} 초")
-                val intent = Intent(this, MainActivity2::class.java)
-                startActivity(intent)
+//                val intent = Intent(this, MainActivity2::class.java)
+                UserApiClient.instance.me { user, error ->
+                    if (error != null) {
+                        Log.e(ContentValues.TAG, "사용자 정보 요청 실패", error)
+                    }
+                    else if (user != null) {
+                        Log.i(
+                            ContentValues.TAG, "사용자 정보 요청 성공" +
+                                    "\n회원번호: ${user.id}" +
+                                    "\n이메일: ${user.kakaoAccount?.email}" +
+                                    "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                                    "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+
+                        userModel.setUser(user.id.toString()!!)
+                    }
+//                startActivity(intent)
                 Toast.makeText(this,"자동 로그인 성공", Toast.LENGTH_SHORT).show()
             }
-        }
+        }}
         binding.bottom.setupWithNavController(binding.container.getFragment<NavHostFragment>().navController)
 
 
-//        binding.btnKakaologin.setOnClickListener {
-//            kakaoLogin()
-//        }
+        binding.btnKakaologin.setOnClickListener {
+            kakaoLogin()
+        }
     }
 
     private fun kakaoLogin() {
@@ -110,15 +129,15 @@ class MainActivity : AppCompatActivity() {
                     addUserToDb(name, email, uid)
                 }
                 else {
-                    val intent: Intent = Intent(this, MainActivity2::class.java)
-                    startActivity(intent)
+//                    val intent: Intent = Intent(this, MainActivity2::class.java)
+//                    startActivity(intent)
                     Toast.makeText(this,"카카오 로그인 성공", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
     private fun addUserToDb(name: String, email: String, uId: String) {
-        mDbRef.child("user").child(uId).setValue(User(name, email, uId))
+        mDbRef.child("user").child(uId).setValue(User(name, email, uId, 0))
         val intent: Intent = Intent(this, MainActivity2::class.java)
         startActivity(intent)
         Toast.makeText(this,"카카오 로그인 성공", Toast.LENGTH_SHORT).show()

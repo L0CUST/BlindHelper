@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/mypageFragment">
+    app:startDestination="@id/mapFragment">
 
     <fragment
-        android:id="@+id/mypageFragment"
+        android:id="@+id/mapFragment"
         android:name="com.example.blindhelper.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
@@ -14,10 +14,18 @@
         android:id="@+id/rewardFragment"
         android:name="com.example.blindhelper.RewardFragment"
         android:label="fragment_reward"
-        tools:layout="@layout/fragment_reward" />
+        tools:layout="@layout/fragment_reward" >
+        <action
+            android:id="@+id/action_rewardFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
     <fragment
         android:id="@+id/myPageFragment"
         android:name="com.example.blindhelper.MyPageFragment"
         android:label="fragment_my_page"
-        tools:layout="@layout/fragment_my_page" />
+        tools:layout="@layout/fragment_my_page" >
+        <action
+            android:id="@+id/action_myPageFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
 </navigation>

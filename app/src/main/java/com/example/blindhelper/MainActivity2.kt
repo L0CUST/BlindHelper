@@ -34,7 +34,7 @@ class MainActivity2 : AppCompatActivity() {
                         "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
                 binding.txtEmail.text = user.kakaoAccount?.email
 
-                model.setUser(User(user.kakaoAccount?.profile?.nickname!!, user.kakaoAccount?.email!!, user.id.toString()!!))
+                model.setUser(user.id.toString()!!,)
             }
         }
 
