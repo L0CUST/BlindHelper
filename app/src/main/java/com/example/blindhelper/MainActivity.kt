@@ -76,13 +76,13 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this,"자동 로그인 성공", Toast.LENGTH_SHORT).show()
             }
         }}
-        binding.container.setOnClickListener{
-            val intent = Intent(this, ObstacleActivity::class.java)
-            intent.putExtra("uid", userModel.users.value?.uId!!)
-            intent.putExtra("point", userModel.users.value?.point)
-            startActivity(intent)
-
-        }
+//        binding.container.setOnClickListener{
+//            val intent = Intent(this, ObstacleActivity::class.java)
+//            intent.putExtra("uid", userModel.users.value?.uId!!)
+//            intent.putExtra("point", userModel.users.value?.point)
+//            startActivity(intent)
+//
+//        }
         binding.bottom.setupWithNavController(binding.container.getFragment<NavHostFragment>().navController)
 
 

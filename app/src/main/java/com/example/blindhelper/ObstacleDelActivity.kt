@@ -13,6 +13,7 @@ import com.example.blindhelper.data.Obstacle
 import com.example.blindhelper.databinding.ActivityObstacleBinding
 import com.example.blindhelper.databinding.ActivityObstacleDelBinding
 import com.example.blindhelper.dialog.ObstacleDialog
+import com.example.blindhelper.repository.ObstacleRepository
 import com.example.blindhelper.viewmodel.ObstacleViewModel
 import com.example.blindhelper.viewmodel.UserViewModel
 import java.util.UUID
@@ -20,27 +21,19 @@ import java.util.UUID
 class ObstacleDelActivity() : AppCompatActivity() {
     private val userModel : UserViewModel by viewModels()
     private val obstacleModel : ObstacleViewModel by viewModels()
-    lateinit var binding: ActivityObstacleBinding
+    lateinit var binding:ActivityObstacleBinding
+    private val repository=ObstacleRepository()
     override fun onCreate(savedInstanceState: Bundle?) {
+        //마커를 클릭하면 해당 uuid를 인텐트에 넣기
+        //1. uuid 2. content
         super.onCreate(savedInstanceState)
         binding = ActivityObstacleBinding.inflate(layoutInflater)
-        val latitude=127
-        val longitude=36
+        val uuid=intent.getStringExtra("uuid")
         setContentView(binding.root)
-        val uid = intent.getStringExtra("uid")
-        val point = intent.getIntExtra("point", 0)
+
+
         binding.btnRegister.setOnClickListener {
-
-            val obstacle = Obstacle(
-                UUID.randomUUID().toString(),
-                latitude,
-                longitude,
-                0,
-                uid!!,
-                binding.editExplain.text.toString()
-            )
-            obstacleModel.postObstacle(obstacle)
-
+            repository.deleteObstacle(uuid!!)
 
         }
     }

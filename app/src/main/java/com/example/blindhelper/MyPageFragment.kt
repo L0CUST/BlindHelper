@@ -31,8 +31,6 @@ class MyPageFragment : Fragment() {
                 Toast.makeText(context, "로그인을 한 사용자만 접근할 수 있습니다.",  Toast.LENGTH_SHORT).show()
                 findNavController(this).navigate(R.id.action_myPageFragment_to_mapFragment)
             }
-
-
         }
 
         binding= FragmentMyPageBinding.inflate(inflater)

@@ -19,11 +19,12 @@ class ObstacleActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityObstacleBinding.inflate(layoutInflater)
-        val latitude=127
-        val longitude=36
+        val latitude=intent.getDoubleExtra("latitude", 0.0)
+        val longitude=intent.getDoubleExtra("longitude", 0.0)
         setContentView(binding.root)
         val uid = intent.getStringExtra("uid")
         val point = intent.getIntExtra("point", 0)
+
         binding.btnRegister.setOnClickListener {
 
             val obstacle = Obstacle(

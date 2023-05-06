@@ -1,7 +1,9 @@
 package com.example.blindhelper
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -21,6 +23,9 @@ import androidx.core.content.PermissionChecker
 import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import com.example.blindhelper.data.User
 import com.example.blindhelper.databinding.FragmentMapBinding
 import com.example.blindhelper.viewmodel.ObstacleViewModel
 import com.example.blindhelper.viewmodel.UserViewModel
@@ -38,7 +43,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
 import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.pow
@@ -46,14 +58,17 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 @Suppress("DEPRECATION")
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
     private lateinit var binding: FragmentMapBinding
     private val model : UserViewModel by activityViewModels()
     private val obstacle : ObstacleViewModel by activityViewModels()
     private lateinit var mMap: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-
+    lateinit var mAuth: FirebaseAuth
+    lateinit var mDbRef: DatabaseReference
+    private var latitude : Double = 0.0
+    private var longitude : Double = 0.0
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
     }
@@ -63,6 +78,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+            if (error != null) {
+                binding.btnKakaoLogin.visibility=View.VISIBLE
+            }
+            else{
+                binding.btnKakaoLogin.visibility=View.INVISIBLE
+            }
+        }
         binding = FragmentMapBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -75,6 +98,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         requirePermissions(permissions, 1000)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+        binding.btnPlus.setOnClickListener {
+            val intent = Intent(requireContext(), ObstacleActivity::class.java)
+            intent.putExtra("uid", model.users.value?.uId!!)
+            intent.putExtra("point", model.users.value?.point)
+            intent.putExtra("latitude", latitude)
+            intent.putExtra("longitude", longitude)
+            startActivity(intent)
+        }
+        binding.btnKakaoLogin.setOnClickListener {
+            kakaoLogin()
+        }
     }
 
     private fun startProcess() {
@@ -119,6 +153,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         updateLocation()
     }
 
+    override fun onInfoWindowClick(marker: Marker) {
+        val intent = Intent(requireContext(), ObstacleDelActivity::class.java)
+        intent.putExtra("content", marker.title)
+        intent.putExtra("uuid", marker.snippet)
+        startActivity(intent)
+    }
+
     @SuppressLint("MissingPermission")
     fun updateLocation() {
         val locationRequest = LocationRequest.create()
@@ -141,6 +182,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     fun setLocation(lastLocation: Location) {
         val latlng = LatLng(lastLocation.latitude, lastLocation.longitude)
+        latitude=lastLocation.latitude
+        longitude=lastLocation.longitude
         val markerOptions = MarkerOptions()
             .position(latlng)
             .title("현위치")
@@ -152,7 +195,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mMap.addMarker(markerOptions)
         mMap.addCircle(CircleOptions()
             .center(latlng)
-            .radius(5.0)
+            .radius(3.0)
             .strokeColor(Color.RED)
             .fillColor(Color.TRANSPARENT)
         )
@@ -163,7 +206,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 val obstaclePos = LatLng(dat.latitude, dat.longitude)
                 val mMarkerOptions = MarkerOptions()
                     .position(obstaclePos)
-                    .title("장애물")
+                    .title(dat.content)
+                    .snippet(dat.uuid)
                     .icon(bitmapDescriptorFromVector(activity as MainActivity, R.drawable.obstacle))
                 mMap.addMarker(mMarkerOptions)
 
@@ -174,12 +218,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 locB.latitude = dat.latitude
                 locB.longitude = dat.longitude
                 val distance = locA.distanceTo(locB)
-                if (distance <= 5) {
+                if (distance <= 3) {
                     Toast.makeText(activity as MainActivity, "장애물 감지", Toast.LENGTH_SHORT).show()
                 }
             }
         }
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        mMap.setOnInfoWindowClickListener(this@MapFragment)
     }
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
@@ -190,4 +235,67 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             BitmapDescriptorFactory.fromBitmap(bitmap)
         }
     }
+
+    private fun kakaoLogin() {
+        val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+            if (error != null) {
+                Log.e(ContentValues.TAG, "카카오계정으로 로그인 실패", error)
+            } else if (token != null) {
+                Log.i(ContentValues.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
+                getUserInfo()
+            }
+        }
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
+            UserApiClient.instance.loginWithKakaoTalk(requireContext()) { token, error ->
+                if (error != null) {
+                    Log.e(ContentValues.TAG, "카카오톡으로 로그인 실패", error)
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        return@loginWithKakaoTalk
+                    }
+                    UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
+                } else if (token != null) {
+                    Log.i(ContentValues.TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                    getUserInfo()
+                }
+            }
+        } else {
+            UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
+        }
+    }
+
+    private fun getUserInfo() {
+        UserApiClient.instance.me { user, error ->
+            if (error != null) {
+                Log.e(ContentValues.TAG, "사용자 정보 요청 실패", error)
+            }
+            else if (user != null) {
+                val kname = "${user.kakaoAccount?.profile?.nickname}"
+                val kemail = "${user.kakaoAccount?.email}"
+                val kid = "${user.id}"
+
+                signUp(kname, kemail, kid, 0)
+            }
+        }
+    }
+
+    private fun signUp(name: String, email: String, uid: String, point:Int) {
+        mAuth.createUserWithEmailAndPassword(email, uid)
+            .addOnCompleteListener(MainActivity()) { task ->
+                if (task.isSuccessful) {
+                    addUserToDb(name, email, uid, point)
+                }
+                else {
+                    Toast.makeText(requireContext(),"카카오 로그인 성공", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    private fun addUserToDb(name: String, email: String, uId: String, point:Int) {
+        mDbRef.child("user").child(uId).setValue(User(name, email, uId, point))
+        Toast.makeText(requireContext(),"카카오 로그인 성공", Toast.LENGTH_SHORT).show()
+    }
+    fun getPoint() {
+        Toast.makeText(requireContext(), "10원이 적립되었습니다", Toast.LENGTH_SHORT).show()
+    }
+
 }
