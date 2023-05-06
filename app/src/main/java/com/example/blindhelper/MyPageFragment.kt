@@ -44,9 +44,10 @@ class MyPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val users = model.users.value!!
-        binding.name.text = users.name
-        binding.point.text=users.point.toString()
-        binding.logout.setOnClickListener {
+        binding.txtName.text = users.name
+        binding.txtPoint.text = users.point.toString()
+        binding.txtEmail.text=users.email
+        binding.btnLogout.setOnClickListener {
             kakaologout()
         }
 

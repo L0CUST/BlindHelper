@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         binding.container.setOnClickListener{
             val intent = Intent(this, ObstacleActivity::class.java)
             intent.putExtra("uid", userModel.users.value?.uId!!)
+            intent.putExtra("point", userModel.users.value?.point)
             startActivity(intent)
 
         }
@@ -150,6 +151,9 @@ class MainActivity : AppCompatActivity() {
 //        val intent: Intent = Intent(this, MainActivity2::class.java)
 //        startActivity(intent)
         Toast.makeText(this,"카카오 로그인 성공", Toast.LENGTH_SHORT).show()
+    }
+    fun getPoint() {
+        Toast.makeText(this, "10원이 적립되었습니다", Toast.LENGTH_SHORT)
     }
 
 }

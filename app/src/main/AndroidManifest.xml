@@ -16,6 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BlindHelper"
         tools:targetApi="31">
+        <activity
+            android:name=".ObstacleDelActivity"
+            android:exported="false"
+            android:label="@string/title_activity_obstacle_del"
+            android:theme="@style/Theme.BlindHelper" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -1,21 +1,26 @@
 package com.example.blindhelper
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.blindhelper.data.Obstacle
 import com.example.blindhelper.databinding.ActivityObstacleBinding
+import com.example.blindhelper.databinding.ActivityObstacleDelBinding
 import com.example.blindhelper.dialog.ObstacleDialog
 import com.example.blindhelper.viewmodel.ObstacleViewModel
 import com.example.blindhelper.viewmodel.UserViewModel
 import java.util.UUID
 
-class ObstacleActivity() : AppCompatActivity() {
+class ObstacleDelActivity() : AppCompatActivity() {
     private val userModel : UserViewModel by viewModels()
     private val obstacleModel : ObstacleViewModel by viewModels()
-    lateinit var binding:ActivityObstacleBinding
+    lateinit var binding: ActivityObstacleBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityObstacleBinding.inflate(layoutInflater)
@@ -30,12 +35,11 @@ class ObstacleActivity() : AppCompatActivity() {
                 UUID.randomUUID().toString(),
                 latitude,
                 longitude,
-                1,
+                0,
                 uid!!,
                 binding.editExplain.text.toString()
             )
-            val obstacleDialog = ObstacleDialog(obstacle, uid, point+20)
-            obstacleDialog.show(supportFragmentManager, "dialog")
+            obstacleModel.postObstacle(obstacle)
 
 
         }

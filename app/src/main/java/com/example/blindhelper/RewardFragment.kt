@@ -57,8 +57,9 @@ class RewardFragment : Fragment() {
         binding.rewardRec.layoutManager = LinearLayoutManager(requireContext())
         binding.rewardRec.adapter = adapter
         val value = model.users.value
-        binding.name.text=value?.name
-        binding.point.text=value?.point.toString()
+        binding.txtName.text = value?.name
+        binding.txtEmail.text=value?.email
+        binding.txtPointReward.text=value?.point.toString()
     }
 
 
