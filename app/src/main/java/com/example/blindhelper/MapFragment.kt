@@ -212,12 +212,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickL
 
         val data = obstacle.obstacles.value
         if (data != null) {
-            for (dat in data) {
-                val obstaclePos = LatLng(dat.latitude, dat.longitude)
+            for (value in data) {
+                val obstaclePos = LatLng(value.latitude, value.longitude)
                 val mMarkerOptions = MarkerOptions()
                     .position(obstaclePos)
-                    .title(dat.content)
-                    .snippet(dat.uuid)
+                    .title(value.content)
+                    .snippet(value.uuid)
                     .icon(bitmapDescriptorFromVector(activity as MainActivity, R.drawable.obstacle))
                 mMap.addMarker(mMarkerOptions)
 
@@ -225,11 +225,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickL
                 locA.latitude = lastLocation.latitude
                 locA.longitude = lastLocation.longitude
                 val locB: Location = Location("")
-                locB.latitude = dat.latitude
-                locB.longitude = dat.longitude
+                locB.latitude = value.latitude
+                locB.longitude = value.longitude
                 val distance = locA.distanceTo(locB)
                 if (distance <= 3) {
-                    tts!!.speak("근처에 ${dat.content}이 있습니다. 주의 바랍니다.", TextToSpeech.QUEUE_FLUSH, null)
+                    tts!!.speak("근처에 ${value.content}이가 있습니다. 주의 바랍니다.", TextToSpeech.QUEUE_FLUSH, null)
                 }
             }
         }
