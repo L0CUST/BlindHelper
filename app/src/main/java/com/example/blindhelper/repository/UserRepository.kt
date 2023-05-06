@@ -36,4 +36,7 @@ class UserRepository {
     fun getPoint(uid:String, point: Int) {//point는 업데이트 된 값!
         userRef.child(uid).child("point").setValue(point)
     }
+    fun addUser(user: User) {
+        userRef.child(user.uId).setValue(user)
+    }
 }

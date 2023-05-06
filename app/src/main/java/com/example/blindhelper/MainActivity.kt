@@ -64,19 +64,28 @@ class MainActivity : AppCompatActivity() {
                                     "\n이메일: ${user.kakaoAccount?.email}" +
                                     "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
                                     "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
-
-                        userModel.setUser(user.id.toString()!!)
+                        val user1 = User(
+                            user.kakaoAccount?.profile?.nickname!!,
+                            user.kakaoAccount?.email!!,
+                            user.id.toString(),
+                            0
+                        )
+                        userModel.setUser(user1)
                     }
 //                startActivity(intent)
                 Toast.makeText(this,"자동 로그인 성공", Toast.LENGTH_SHORT).show()
             }
         }}
+        binding.container.setOnClickListener{
+            val intent = Intent(this, ObstacleActivity::class.java)
+            intent.putExtra("uid", userModel.users.value?.uId!!)
+            startActivity(intent)
+
+        }
         binding.bottom.setupWithNavController(binding.container.getFragment<NavHostFragment>().navController)
 
 
-        binding.btnKakaologin.setOnClickListener {
-            kakaoLogin()
-        }
+
     }
 
     private fun kakaoLogin() {
@@ -117,16 +126,16 @@ class MainActivity : AppCompatActivity() {
                 val kemail = "${user.kakaoAccount?.email}"
                 val kid = "${user.id}"
 
-                signUp(kname, kemail, kid)
+                signUp(kname, kemail, kid, 0)
             }
         }
     }
 
-    private fun signUp(name: String, email: String, uid: String) {
+    private fun signUp(name: String, email: String, uid: String, point:Int) {
         mAuth.createUserWithEmailAndPassword(email, uid)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    addUserToDb(name, email, uid)
+                    addUserToDb(name, email, uid, point)
                 }
                 else {
 //                    val intent: Intent = Intent(this, MainActivity2::class.java)
@@ -136,10 +145,11 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun addUserToDb(name: String, email: String, uId: String) {
-        mDbRef.child("user").child(uId).setValue(User(name, email, uId, 0))
-        val intent: Intent = Intent(this, MainActivity2::class.java)
-        startActivity(intent)
+    private fun addUserToDb(name: String, email: String, uId: String, point:Int) {
+        mDbRef.child("user").child(uId).setValue(User(name, email, uId, point))
+//        val intent: Intent = Intent(this, MainActivity2::class.java)
+//        startActivity(intent)
         Toast.makeText(this,"카카오 로그인 성공", Toast.LENGTH_SHORT).show()
     }
+
 }

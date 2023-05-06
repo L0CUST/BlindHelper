@@ -11,8 +11,9 @@ class UserViewModel() : ViewModel() {
 
     private val _users = MutableLiveData<User>(User())
     val users get():LiveData<User> = _users
-    fun setUser(uid:String) {
-        repository.observeObstacleList(_users, uid)
+    fun setUser(user:User) {
+        repository.addUser(user)
+        repository.observeObstacleList(_users, user.uId)
     }
     fun getPoint() {
         repository.getPoint(users.value?.uId!!, users.value?.point!!+20)
