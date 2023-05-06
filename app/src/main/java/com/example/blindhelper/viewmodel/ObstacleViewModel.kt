@@ -13,4 +13,13 @@ class ObstacleViewModel():ViewModel() {
     init {
         repository.observeObstacleList(_obstacles)
     }
+
+    fun postObstacle(obstacle: Obstacle) {
+        if (obstacle.has_obstacle == 1) {//장애물 등록
+            repository.postObstacle(obstacle)
+
+        } else {
+            repository.deleteObstacle(obstacle.uuid)
+        }
+    }
 }

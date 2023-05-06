@@ -44,9 +44,26 @@ class MyPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val users = model.users.value!!
-        binding.name.text = users.name
-        binding.point.text=users.point.toString()
+        binding.txtName.text = users.name
+        binding.txtPoint.text = users.point.toString()
+        binding.txtEmail.text=users.email
+        binding.btnLogout.setOnClickListener {
+            kakaologout()
+        }
 
+    }
+    private fun kakaologout() {
+        UserApiClient.instance.logout { error ->
+            if (error != null) {
+                Log.e(ContentValues.TAG, "로그아웃 실패. SDK에서 토큰 삭제됨", error)
+            }
+            else {
+                Log.i(ContentValues.TAG, "로그아웃 성공. SDK에서 토큰 삭제됨")
+                Toast.makeText(context,"카카오 로그아웃 성공", Toast.LENGTH_SHORT).show()
+                findNavController(this).navigate(R.id.action_myPageFragment_to_mapFragment)
+
+            }
+        }
     }
 
 }

@@ -1,5 +1,9 @@
 package com.example.blindhelper.adapter
 
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +23,12 @@ class RewardAdapter(val array:Array<Reward>): RecyclerView.Adapter<RewardAdapter
             }
             binding.txtName.text=reward.name
             binding.txtStoreName.text=reward.store
-            binding.txtPrice.text=reward.price
+//            binding.txtPrice.text=reward.price
+            val spannableString = SpannableString(reward.price+"원")
+            val boldSpan = StyleSpan(Typeface.BOLD)
+            spannableString.setSpan(boldSpan, 0, spannableString.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+            binding.txtPrice.text = spannableString
+            binding.order.text=reward.id.toString()
         }
     }
 

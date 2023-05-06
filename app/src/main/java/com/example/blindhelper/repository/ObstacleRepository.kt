@@ -35,6 +35,9 @@ class ObstacleRepository{
         )
     }
     fun postObstacle(obs:Obstacle){
-        obsRef.push().setValue(obs)
+        obsRef.child(obs.uuid).setValue(obs)
+    }
+    fun deleteObstacle(uuid:String) {
+        obsRef.child(uuid).removeValue()
     }
 }
