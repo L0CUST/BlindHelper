@@ -1,6 +1,7 @@
 package com.example.blindhelper
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -34,10 +35,8 @@ class ObstacleDelActivity() : AppCompatActivity() {
 
         binding.btnRegister.setOnClickListener {
             repository.deleteObstacle(uuid!!)
-
+            Toast.makeText(this, "신고 내용이 접수되었습니다.", Toast.LENGTH_SHORT).show()
+            finish()
         }
-    }
-    fun fin() {
-        finish()
     }
 }

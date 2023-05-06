@@ -10,12 +10,16 @@ import com.example.blindhelper.databinding.ActivityObstacleBinding
 import com.example.blindhelper.dialog.ObstacleDialog
 import com.example.blindhelper.viewmodel.ObstacleViewModel
 import com.example.blindhelper.viewmodel.UserViewModel
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.util.UUID
 
 class ObstacleActivity() : AppCompatActivity() {
     private val userModel : UserViewModel by viewModels()
     private val obstacleModel : ObstacleViewModel by viewModels()
     lateinit var binding:ActivityObstacleBinding
+    private val database = Firebase.database
+    private val userRef = database.getReference("user")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityObstacleBinding.inflate(layoutInflater)
@@ -35,13 +39,9 @@ class ObstacleActivity() : AppCompatActivity() {
                 uid!!,
                 binding.editExplain.text.toString()
             )
-            val obstacleDialog = ObstacleDialog(obstacle, uid, point+20)
-            obstacleDialog.show(supportFragmentManager, "dialog")
-
-
+            obstacleModel.postObstacle(obstacle)
+            userRef.child(uid).child("point").setValue(point+20)
+            finish()
         }
-    }
-    fun fin() {
-        finish()
     }
 }

@@ -12,6 +12,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -51,6 +52,7 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import java.util.Locale
 import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.pow
@@ -69,6 +71,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickL
     lateinit var mDbRef: DatabaseReference
     private var latitude : Double = 0.0
     private var longitude : Double = 0.0
+    var tts: TextToSpeech? = null
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
     }
@@ -98,6 +101,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickL
         requirePermissions(permissions, 1000)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+        tts = TextToSpeech(
+            requireContext()
+        ) { status ->
+            if (status != TextToSpeech.ERROR) {
+                tts!!.language = Locale.KOREAN
+            }
+        }
         binding.btnPlus.setOnClickListener {
             val intent = Intent(requireContext(), ObstacleActivity::class.java)
             intent.putExtra("uid", model.users.value?.uId!!)
@@ -219,7 +229,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickL
                 locB.longitude = dat.longitude
                 val distance = locA.distanceTo(locB)
                 if (distance <= 3) {
-                    Toast.makeText(activity as MainActivity, "장애물 감지", Toast.LENGTH_SHORT).show()
+                    tts!!.speak("근처에 ${dat.content}이 있습니다. 주의 바랍니다.", TextToSpeech.QUEUE_FLUSH, null)
                 }
             }
         }

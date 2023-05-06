@@ -34,11 +34,9 @@ class ObstacleDialog(val obstacle:Obstacle, val uuuid:String, val point:Int) : D
         binding.btnConfirm.setOnClickListener {
             viewModel.postObstacle(obstacle)
             userRef.child(uuuid).child("point").setValue(point)
-            (activity as ObstacleActivity).fin()
+            (activity as ObstacleActivity).finish()
             dismiss()
         }
-
-
         super.onViewCreated(view, savedInstanceState)
     }
 }
