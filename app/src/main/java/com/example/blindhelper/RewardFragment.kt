@@ -28,8 +28,6 @@ class RewardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
         binding= FragmentRewardBinding.inflate(inflater)
 
         UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
@@ -38,8 +36,6 @@ class RewardFragment : Fragment() {
                 Toast.makeText(context, "로그인을 한 사용자만 접근할 수 있습니다.",  Toast.LENGTH_SHORT).show()
                 findNavController(this).navigate(R.id.action_rewardFragment_to_mapFragment)
             }
-
-
         }
         return binding.root
     }
@@ -50,7 +46,9 @@ class RewardFragment : Fragment() {
             Reward("황금올리브 한마리 콤보", "BBQ", "20000", 2),
             Reward("아이스아메리카노", "스타벅스", "4000", 3),
             Reward("싸이버거 세트", "맘스터치", "6000", 4),
-            Reward("츄파춥스250", "GS25", "250", 5)
+            Reward("츄파춥스250", "GS25", "250", 5),
+            Reward("몬스터 화이트", "GS25", "1500", 6),
+            Reward("포카칩" , "오리온", "2000", 7)
         )
 
         val adapter = RewardAdapter(rewardArray)
@@ -61,6 +59,4 @@ class RewardFragment : Fragment() {
         binding.txtEmail.text=value?.email
         binding.txtPointReward.text=value?.point.toString()
     }
-
-
 }

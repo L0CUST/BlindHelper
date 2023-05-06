@@ -72,17 +72,9 @@ class MainActivity : AppCompatActivity() {
                         )
                         userModel.setUser(user1)
                     }
-//                startActivity(intent)
                 Toast.makeText(this,"자동 로그인 성공", Toast.LENGTH_SHORT).show()
             }
         }}
-//        binding.container.setOnClickListener{
-//            val intent = Intent(this, ObstacleActivity::class.java)
-//            intent.putExtra("uid", userModel.users.value?.uId!!)
-//            intent.putExtra("point", userModel.users.value?.point)
-//            startActivity(intent)
-//
-//        }
         binding.bottom.setupWithNavController(binding.container.getFragment<NavHostFragment>().navController)
 
 
@@ -139,8 +131,6 @@ class MainActivity : AppCompatActivity() {
                     addUserToDb(name, email, uid, point)
                 }
                 else {
-//                    val intent: Intent = Intent(this, MainActivity2::class.java)
-//                    startActivity(intent)
                     Toast.makeText(this,"카카오 로그인 성공", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -148,12 +138,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun addUserToDb(name: String, email: String, uId: String, point:Int) {
         mDbRef.child("user").child(uId).setValue(User(name, email, uId, point))
-//        val intent: Intent = Intent(this, MainActivity2::class.java)
-//        startActivity(intent)
         Toast.makeText(this,"카카오 로그인 성공", Toast.LENGTH_SHORT).show()
     }
     fun getPoint() {
         Toast.makeText(this, "10원이 적립되었습니다", Toast.LENGTH_SHORT)
     }
-
 }

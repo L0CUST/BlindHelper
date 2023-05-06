@@ -20,10 +20,11 @@ class RewardAdapter(val array:Array<Reward>): RecyclerView.Adapter<RewardAdapter
                 3->binding.imgGift.setImageResource(R.drawable.coffee)
                 4->binding.imgGift.setImageResource(R.drawable.burger)
                 5->binding.imgGift.setImageResource(R.drawable.candy)
+                6->binding.imgGift.setImageResource(R.drawable.monster_white)
+                7->binding.imgGift.setImageResource(R.drawable.potato_chips)
             }
             binding.txtName.text=reward.name
             binding.txtStoreName.text=reward.store
-//            binding.txtPrice.text=reward.price
             val spannableString = SpannableString(reward.price+"원")
             val boldSpan = StyleSpan(Typeface.BOLD)
             spannableString.setSpan(boldSpan, 0, spannableString.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
